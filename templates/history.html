@@ -6,49 +6,24 @@
     <title>注文履歴 - 油そば注文管理システム</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .container {
-            max-width: 1100px;
-        }
-        .table-responsive {
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        .table-red-header th {
-            background-color: #dc3545 !important;
-            color: #ffffff !important;
-            text-align: center;
-            vertical-align: middle;
-            font-weight: bold;
-            border: 1px solid #c82333;
-        }
-        .table td {
-            text-align: center;
-            vertical-align: middle;
-            border: 1px solid #dee2e6;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <div class="container my-4">
+<body class="p-2 p-md-4">
+    <div class="container my-3" style="max-width: 1100px;">
         <!-- ヘッダーエリア -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
             <h1 class="h3 fw-bold text-dark m-0">📋 注文履歴</h1>
-            <div>
-                <a href="/download_csv" class="btn btn-success fw-bold me-2">📥 CSVダウンロード</a>
-                <a href="/" class="btn btn-outline-secondary me-2">← 注文画面に戻る</a>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="/download_csv" class="btn btn-success fw-bold">📥 CSVダウンロード</a>
+                <a href="/" class="btn btn-outline-secondary">← 注文画面に戻る</a>
                 <button type="button" class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#resetModal">
                     🗑️ 履歴リセット
                 </button>
             </div>
         </div>
 
-        <!-- 元の表レイアウト -->
-        <div class="table-responsive p-3">
+        <!-- 表レイアウト（スマホ時は横スクロール可能） -->
+        <div class="table-responsive p-2 p-md-3">
             <table class="table table-hover align-middle mb-0">
                 <thead>
                     <tr class="table-red-header">
@@ -90,7 +65,7 @@
 
     <!-- パスワード確認用モーダル（履歴リセット） -->
     <div class="modal fade" id="resetModal" tabindex="-1" aria-labelledby="resetModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title fw-bold" id="resetModalLabel">⚠️ 注文履歴の全削除</h5>
@@ -98,7 +73,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="resetPassword" class="form-label fw-bold">パスワードを入力してください</label>
+                        <label for="resetPassword" class="form-label fw-bold">パスワードを入力してください：</label>
                         <input type="password" class="form-control" id="resetPassword" placeholder="password">
                     </div>
                 </div>
@@ -117,7 +92,7 @@
         const password = document.getElementById('resetPassword').value;
 
         if (!password) {
-            alert('password');
+            alert('パスワードを入力してください。');
             return;
         }
 
