@@ -3,25 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>注文履歴 - 藤田研究室</title>
+    <title>注文履歴 - 油そば注文管理システム</title>
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1100px;
+        }
+        .table-responsive {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .table-red-header th {
+            background-color: #dc3545 !important;
+            color: #ffffff !important;
+            text-align: center;
+            vertical-align: middle;
+            font-weight: bold;
+            border: 1px solid #c82333;
+        }
+        .table td {
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid #dee2e6;
+        }
+    </style>
 </head>
-<body class="p-4">
-
-<div class="container-fluid" style="max-width: 1200px;">
-    <!-- ヘッダー ＆ ダウンロードボタン -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">📋 注文履歴</h2>
-        <div>
-            <a href="{{ url_for('download_csv') }}" class="btn btn-success fw-bold me-2">📥 CSVダウンロード</a>
-            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary fw-bold">← 注文画面に戻る</a>
+<body>
+    <div class="container my-4">
+        <!-- ヘッダーエリア -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 fw-bold text-dark m-0">📋 注文履歴</h1>
+            <div>
+                <a href="/download_csv" class="btn btn-success fw-bold me-2">📥 CSVダウンロード</a>
+                <a href="/" class="btn btn-outline-secondary me-2">← 注文画面に戻る</a>
+                <button type="button" class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#resetModal">
+                    🗑️ 履歴リセット
+                </button>
+            </div>
         </div>
-    </div>
 
-    <div class="card shadow-sm p-2">
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped align-middle m-0">
+        <!-- 元の表レイアウト -->
+        <div class="table-responsive p-3">
+            <table class="table table-hover align-middle mb-0">
                 <thead>
                     <tr class="table-red-header">
                         <th>時間</th>
@@ -39,27 +67,81 @@
                 <tbody>
                     {% for order in orders %}
                     <tr>
-                        <td style="font-size: 0.9rem; white-space: nowrap;">{{ order[9] }}</td>
-                        <td>{{ order[1] if order[1] > 0 else '' }}</td>
-                        <td>{{ order[2] if order[2] > 0 else '' }}</td>
-                        <td>{{ order[5] if order[5] > 0 else '' }}</td>
-                        <td>{{ order[6] if order[6] > 0 else '' }}</td>
-                        <td>{{ order[8] if order[8] > 0 else '' }}</td>
-                        <td>{{ order[3] if order[3] > 0 else '' }}</td>
-                        <td>{{ order[4] if order[4] > 0 else '' }}</td>
-                        <td>{{ order[7] if order[7] > 0 else '' }}</td>
-                        <td class="fw-bold text-end pe-3">{{ "{:,}".format(order[10]) }}</td>
+                        <td class="text-muted small">{{ order.created_at }}</td>
+                        <td>{% if order.normal > 0 %}{{ order.normal }}{% endif %}</td>
+                        <td>{% if order.spicy > 0 %}{{ order.spicy }}{% endif %}</td>
+                        <td>{% if order.cheese > 0 %}{{ order.cheese }}{% endif %}</td>
+                        <td>{% if order.mayo > 0 %}{{ order.mayo }}{% endif %}</td>
+                        <td>{% if order.redbull > 0 %}{{ order.redbull }}{% endif %}</td>
+                        <td>{% if order.set_normal > 0 %}{{ order.set_normal }}{% endif %}</td>
+                        <td>{% if order.set_spicy > 0 %}{{ order.set_spicy }}{% endif %}</td>
+                        <td>{% if order.meat > 0 %}{{ order.meat }}{% endif %}</td>
+                        <td class="fw-bold">¥{{ "{:,}".format(order.total_price) }}</td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="10" class="text-center text-muted py-4">まだ注文履歴はありません</td>
+                        <td colspan="10" class="text-center text-muted py-4">注文履歴はまだありません。</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
-</div>
 
+    <!-- パスワード確認用モーダル（履歴リセット） -->
+    <div class="modal fade" id="resetModal" tabindex="-1" aria-labelledby="resetModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold" id="resetModalLabel">⚠️ 注文履歴の全削除</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="resetPassword" class="form-label fw-bold">パスワードを入力してください</label>
+                        <input type="password" class="form-control" id="resetPassword" placeholder="password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                    <button type="button" class="btn btn-danger fw-bold" onclick="executeReset()">削除を実行する</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    function executeReset() {
+        const password = document.getElementById('resetPassword').value;
+
+        if (!password) {
+            alert('password');
+            return;
+        }
+
+        fetch('/reset_db', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'password=' + encodeURIComponent(password)
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('注文履歴を完全にリセットしました。');
+                location.reload();
+            } else {
+                return response.json().then(data => {
+                    alert(data.message || 'パスワードが違います。');
+                });
+            }
+        })
+        .catch(error => {
+            alert('通信エラーが発生しました。');
+        });
+    }
+    </script>
 </body>
 </html>

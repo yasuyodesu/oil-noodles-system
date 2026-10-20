@@ -60,15 +60,15 @@ def create_order():
 @app.route('/history')
 def history():
     conn = sqlite3.connect('orders.db')
+    conn.row_factory = sqlite3.Row 
     cursor = conn.cursor()
-    cursor.execute('''
-        SELECT id, normal, spicy, set_normal, set_spicy, cheese, mayo, meat, redbull,
-               strftime("%Y/%m/%d %H:%M", created_at, "localtime"), total_price
-        FROM orders ORDER BY id DESC
-    ''')
+    
+    cursor.execute('SELECT * FROM orders ORDER BY id DESC')
     orders = cursor.fetchall()
     conn.close()
+    
     return render_template('history.html', orders=orders)
+
 
 # 追加：CSVダウンロード機能
 @app.route('/download_csv')
@@ -103,6 +103,26 @@ def download_csv():
     response.headers['Content-Type'] = 'text/csv; charset=utf-8-sig'
     
     return response
+
+@app.route('/reset_db', methods=['POST'])
+def reset_db():
+    password = request.form.get('password')
+    
+    # 秘伝のパスワード（お好みに変更してください）
+    correct_password = "sagyosha2026"
+    
+    if password != correct_password:
+        return jsonify({'status': 'error', 'message': 'パスワードが違います！'}), 400
+
+    # データベースの全データを削除（IDもリセット）
+    conn = sqlite3.connect('orders.db')
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM orders')
+    cursor.execute('DELETE FROM sqlite_sequence WHERE name="orders"') # IDを1からに戻す
+    conn.commit()
+    conn.close()
+
+    return jsonify({'status': 'success'})
 
 if __name__ == '__main__':
     init_db()
