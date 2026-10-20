@@ -57,10 +57,10 @@
                         <th>旨辛油そば</th>
                         <th>チーズ</th>
                         <th>マヨネーズ</th>
+                        <th>肉増し</th>
                         <th>レッドブル</th>
                         <th>つばさ油そば</th>
                         <th>つばさ旨辛</th>
-                        <th>肉増し</th>
                         <th>合計金額</th>
                     </tr>
                 </thead>
@@ -72,10 +72,10 @@
                         <td>{% if order.spicy > 0 %}{{ order.spicy }}{% endif %}</td>
                         <td>{% if order.cheese > 0 %}{{ order.cheese }}{% endif %}</td>
                         <td>{% if order.mayo > 0 %}{{ order.mayo }}{% endif %}</td>
+                        <td>{% if order.meat > 0 %}{{ order.meat }}{% endif %}</td>
                         <td>{% if order.redbull > 0 %}{{ order.redbull }}{% endif %}</td>
                         <td>{% if order.set_normal > 0 %}{{ order.set_normal }}{% endif %}</td>
                         <td>{% if order.set_spicy > 0 %}{{ order.set_spicy }}{% endif %}</td>
-                        <td>{% if order.meat > 0 %}{{ order.meat }}{% endif %}</td>
                         <td class="fw-bold">¥{{ "{:,}".format(order.total_price) }}</td>
                     </tr>
                     {% else %}
