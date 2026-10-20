@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注文管理 - 藤田研究室</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="p-4">
+
+<div class="container" style="max-width: 800px;">
+    <!-- ヘッダー -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold mx-auto ps-5">注文管理</h1>
+        <a href="{{ url_for('history') }}" class="btn btn-success fw-bold px-4 py-2" target="_blank">注文履歴確認</a>
+    </div>
+
+    <!-- 成功通知メッセージ -->
+    <div id="successAlert" class="alert alert-success text-center fw-bold d-none" role="alert">
+        注文を確定しました！
+    </div>
+
+    <form id="orderForm">
+        <input type="hidden" name="total_price" id="inputTotalPrice" value="0">
+        <input type="hidden" name="normal_q" id="q_normal" value="0">
+        <input type="hidden" name="spicy_q" id="q_spicy" value="0">
+        <input type="hidden" name="set_normal_q" id="q_set_normal" value="0">
+        <input type="hidden" name="set_spicy_q" id="q_set_spicy" value="0">
+        <input type="hidden" name="cheese_q" id="q_cheese" value="0">
+        <input type="hidden" name="mayo_q" id="q_mayo" value="0">
+        <input type="hidden" name="meat_q" id="q_meat" value="0">
+        <input type="hidden" name="redbull_q" id="q_redbull" value="0">
+
+        <!-- 油そばセクション -->
+        <h4 class="fw-bold mb-3">&lt; 油そば &gt;</h4>
+        <div class="mb-4 ps-3">
+            <div class="row align-items-center mb-3">
+                <div class="col-5 fs-5">ノーマル <span class="text-muted fs-6">(550円)</span></div>
+                <div class="col-7 d-flex align-items-center">
+                    <button type="button" class="btn btn-primary qty-btn" onclick="changeQty('normal', -1)">-</button>
+                    <span class="qty-display" id="disp_normal">0</span>
+                    <button type="button" class="btn btn-danger qty-btn" onclick="changeQty('normal', 1)">+</button>
+                </div>
+            </div>
+            <div class="row align-items-center mb-3">
+                <div class="col-5 fs-5">旨辛 <span class="text-muted fs-6">(600円)</span></div>
+                <div class="col-7 d-flex align-items-center">
+                    <button type="button" class="btn btn-primary qty-btn" onclick="changeQty('spicy', -1)">-</button>
+                    <span class="qty-display" id="disp_spicy">0</span>
+                    <button type="button" class="btn btn-danger qty-btn" onclick="changeQty('spicy', 1)">+</button>
+                </div>
+            </div>
+            <div class="row align-items-center mb-3">
+                <div class="col-5 fs-5">お授けノーマル <span class="text-muted fs-6">(750円)</span></div>
+                <div class="col-7 d-flex align-items-center">
+                    <button type="button" class="btn btn-primary qty-btn" onclick="changeQty('set_normal', -1)">-</button>
+                    <span class="qty-display" id="disp_set_normal">0</span>
+                    <button type="button" class="btn btn-danger qty-btn" onclick="changeQty('set_normal', 1)">+</button>
+                </div>
+            </div>
+            <div class="row align-items-center mb-3">
+                <div class="col-5 fs-5">お授け旨辛 <span class="text-muted fs-6">(800円)</span></div>
+                <div class="col-7 d-flex align-items-center">
+                    <button type="button" class="btn btn-primary qty-btn" onclick="changeQty('set_spicy', -1)">-</button>
+                    <span class="qty-display" id="disp_set_spicy">0</span>
+                    <button type="button" class="btn btn-danger qty-btn" onclick="changeQty('set_spicy', 1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- トッピングセクション -->
+        <h4 class="fw-bold mb-3 mt-4">&lt; トッピング &gt;</h4>
+        <div class="mb-4 ps-3">
+            <div class="row align-items-center mb-3">
+                <div class="col-5 fs-5">チーズ <span class="text-muted fs-6">(+50円)</span></div>
+                <div class="col-7 d-flex align-items-center">
+                    <button type="button" class="btn btn-primary qty-btn" onclick="changeQty('cheese', -1)">-</button>
+                    <span class="qty-display" id="disp_cheese">0</span>
+                    <button type="button" class="btn btn-danger qty-btn" onclick="changeQty('cheese', 1)">+</button>
+                </div>
+            </div>
+            <div class="row align-items-center mb-3">
+                <div class="col-5 fs-5">マヨネーズ <span class="text-muted fs-6">(+50円)</span></div>
+                <div class="col-7 d-flex align-items-center">
+                    <button type="button" class="btn btn-primary qty-btn" onclick="changeQty('mayo', -1)">-</button>
+                    <span class="qty-display" id="disp_mayo">0</span>
+                    <button type="button" class="btn btn-danger qty-btn" onclick="changeQty('mayo', 1)">+</button>
+                </div>
+            </div>
+            <div class="row align-items-center mb-3">
+                <div class="col-5 fs-5">肉増し <span class="text-muted fs-6">(+50円)</span></div>
+                <div class="col-7 d-flex align-items-center">
+                    <button type="button" class="btn btn-primary qty-btn" onclick="changeQty('meat', -1)">-</button>
+                    <span class="qty-display" id="disp_meat">0</span>
+                    <button type="button" class="btn btn-danger qty-btn" onclick="changeQty('meat', 1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ドリンク セクション -->
+        <h4 class="fw-bold mb-3 mt-4">&lt; ドリンク &gt;</h4>
+        <div class="mb-5 ps-3">
+            <div class="row align-items-center mb-3">
+                <div class="col-5 fs-5">レッドブル <span class="text-muted fs-6">(220円)</span></div>
+                <div class="col-7 d-flex align-items-center">
+                    <button type="button" class="btn btn-primary qty-btn" onclick="changeQty('redbull', -1)">-</button>
+                    <span class="qty-display" id="disp_redbull">0</span>
+                    <button type="button" class="btn btn-danger qty-btn" onclick="changeQty('redbull', 1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 合計と確定ボタン -->
+        <div class="row align-items-center justify-content-end mt-4">
+            <div class="col-auto text-end me-4">
+                <span class="total-text" id="displayTotal">合計 0円</span>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-confirm" onclick="submitOrder()">確定</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+let quantities = {
+    normal: 0,
+    spicy: 0,
+    set_normal: 0,
+    set_spicy: 0,
+    cheese: 0,
+    mayo: 0,
+    meat: 0,
+    redbull: 0
+};
+
+const prices = {
+    normal: 550,
+    spicy: 600,
+    set_normal: 750,
+    set_spicy: 800,
+    cheese: 50,
+    mayo: 50,
+    meat: 50,
+    redbull: 220
+};
+
+function changeQty(item, delta) {
+    if (quantities[item] + delta >= 0) {
+        quantities[item] += delta;
+        document.getElementById('disp_' + item).innerText = quantities[item];
+        document.getElementById('q_' + item).value = quantities[item];
+        calculateTotal();
+    }
+}
+
+function calculateTotal() {
+    let total = 
+        (quantities.normal * prices.normal) +
+        (quantities.spicy * prices.spicy) +
+        (quantities.set_normal * prices.set_normal) +
+        (quantities.set_spicy * prices.set_spicy) +
+        (quantities.cheese * prices.cheese) +
+        (quantities.mayo * prices.mayo) +
+        (quantities.meat * prices.meat) +
+        (quantities.redbull * prices.redbull);
+
+    // つばさセット適用時、トッピング1つ無料
+    let totalSets = quantities.set_normal + quantities.set_spicy;
+    let totalToppings = quantities.cheese + quantities.mayo + quantities.meat;
+    
+    if (totalSets > 0 && totalToppings > 0) {
+        let freeCount = Math.min(totalSets, totalToppings);
+        total -= (freeCount * 50);
+    }
+
+    document.getElementById('displayTotal').innerText = '合計 ' + total.toLocaleString() + '円';
+    document.getElementById('inputTotalPrice').value = total;
+}
+
+function submitOrder() {
+    const totalPrice = parseInt(document.getElementById('inputTotalPrice').value);
+    if (totalPrice <= 0) return;
+
+    const formData = new FormData(document.getElementById('orderForm'));
+
+    fetch('/create_order', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            for (let item in quantities) {
+                quantities[item] = 0;
+                document.getElementById('disp_' + item).innerText = '0';
+                document.getElementById('q_' + item).value = '0';
+            }
+            calculateTotal();
+
+        }
+    });
+}
+</script>
+
+</body>
+</html>
