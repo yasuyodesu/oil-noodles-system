@@ -104,6 +104,20 @@ def download_csv():
     
     return response
 
+@app.route('/delete_order/<int:order_id>', methods=['POST'])
+def delete_order(order_id):
+    conn = sqlite3.connect('orders.db')
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM orders WHERE id = ?', (order_id,))
+    deleted = cursor.rowcount
+    conn.commit()
+    conn.close()
+
+    if deleted == 0:
+        return jsonify({'status': 'error', 'message': 'その注文は見つかりませんでした。'}), 404
+
+    return jsonify({'status': 'success'})
+
 @app.route('/reset_db', methods=['POST'])
 def reset_db():
     password = request.form.get('password')
